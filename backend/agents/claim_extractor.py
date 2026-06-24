@@ -2,9 +2,10 @@ import pandas as pd
 from langchain_google_genai import ChatGoogleGenerativeAI
 import os 
 from dotenv import load_dotenv
+from langchain_core.prompts import PromptTemplate
 
 def taking_description():
-    df = pd.read_csv("../../data/processed/unified_dataset.csv",usecols=["title","description"])
+    df = pd.read_csv("../../data/processed/unified_dataset.csv",usecols=["tittle","description"])
     return df.values
 
 def calling_gemini():
@@ -21,15 +22,18 @@ def calling_gemini():
     
     tittle_and_description = taking_description()
 
-    for tittle,description in tittle_and_description:
-        response = llm.invoke(
-            input=f"""
-            tittle:{tittle}
-            description:{description}
+    template = """
+            Tittle:{tittle}
+            Description:{description}
             read the tittle,description and just give me factual claim in one sentence.
+            no quotes
+            no explanation 
+            output just claim in one sentence
             """
-        )
-        gemini_response.append(response.content)
+    prompt = PromptTemplate.from_template(template=template)
+    for tittle,description in tittle_and_description:
+        response = prompt.format(tittle=tittle,description=description)
+        gemini_response.append(response)
 
     return gemini_response
 
