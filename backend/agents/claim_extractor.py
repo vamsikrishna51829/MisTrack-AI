@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 
 def taking_description():
-    df = pd.read_csv("../../data/processed/unified_dataset.csv",usecols=["tittle","description"])
+    df = pd.read_csv("../../data/processed/unified_dataset.csv",usecols=["title","description"])
     return df.values
 
 def calling_gemini():
@@ -20,20 +20,24 @@ def calling_gemini():
         temperature = 0.0
     )
     
-    tittle_and_description = taking_description()
+    title_and_description = taking_description()
 
     template = """
-            Tittle:{tittle}
+            Title:{title}
             Description:{description}
-            read the tittle,description and just give me factual claim in one sentence.
+            read the Title,Description and just give me factual claim in one sentence.
             no quotes
             no explanation 
             output just claim in one sentence
             """
     prompt = PromptTemplate.from_template(template=template)
-    for tittle,description in tittle_and_description:
-        response = prompt.format(tittle=tittle,description=description)
-        gemini_response.append(response)
+    chain = prompt | llm
+    for title,description in title_and_description:
+        response = chain.invoke({
+            "title" : {title},
+            "description" : {description}
+        })
+        gemini_response.append(response.content)
 
     return gemini_response
 
