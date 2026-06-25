@@ -7,7 +7,7 @@ def news_combine():
     df2 = df2.rename(columns={
         "username" : "author",
         "created_at" : "publishedAt",
-        "display_name" : "tittle",
+        "display_name" : "title",
         "note" : "description",
     })
 
