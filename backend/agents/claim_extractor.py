@@ -8,11 +8,7 @@ def taking_description():
     df = pd.read_csv("../../data/processed/unified_dataset.csv",usecols=["title","description"])
     return df.values
 
-def calling_gemini():
-    load_dotenv()
-
-    gemini_response = []
-    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+def extract_claim(GEMINI_API_KEY,title,description=None):
 
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
@@ -20,33 +16,34 @@ def calling_gemini():
         temperature = 0.0
     )
     
-    title_and_description = taking_description()
-
     template = """
             Title:{title}
             Description:{description}
-            read the Title,Description and just give me factual claim in one sentence.
+            read the Title,Description and just give me factual claim using the title and description if description not give me factual claim based on title in one sentence.
             no quotes
             no explanation 
             output just claim in one sentence
             """
     prompt = PromptTemplate.from_template(template=template)
     chain = prompt | llm
-    for title,description in title_and_description:
+    try:
         response = chain.invoke({
-            "title" : {title},
-            "description" : {description}
+            "title" : title,
+            "description" : description
         })
-        gemini_response.append(response.content)
-
-    return gemini_response
-
+        return response.content
+    except Exception:
+        return title
 def response_saving():
+    claim = []
+    load_dotenv()
 
-    claim = calling_gemini()
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    for title,description in taking_description():
+        claim.append(extract_claim(GEMINI_API_KEY,title,description))
 
     df = pd.read_csv("../../data/processed/unified_dataset.csv")
-    df = df.assign(gemini_response=claim)
+    df = df.assign(extracted_claim=claim)
 
     df.to_csv("../../data/processed/unified_dataset.csv",index=False)
 
