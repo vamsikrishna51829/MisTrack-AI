@@ -10,9 +10,12 @@ def similarity_engine():
     model = SentenceTransformer('all-MiniLM-L6-v2')    
     embedding = model.encode(sentences,normalize_embeddings=True)
     comb = combinations(embedding,2)
-    for i in comb:
-        similarity_score.append(distance_of_vectors(i[0],i[1]))
-    print(similarity_score)
+    comb_sentences = combinations(sentences,2)
+    for sentence, pair in zip(comb_sentences, comb):
+        distance = distance_of_vectors(pair[0],pair[1])
+        if distance >= 0.8:
+            print(f"{sentence[0],sentence[1]} : {distance}")
+    
 
 def distance_of_vectors(vector1,vector2):
     return np.dot(vector1,vector2)
