@@ -12,10 +12,10 @@ def similarity_engine():
     comb = combinations(embedding,2)
     comb_sentences = combinations(sentences,2)
     for sentence, pair in zip(comb_sentences, comb):
-        distance = distance_of_vectors(pair[0],pair[1])
-        if distance >= 0.8:
-            print(f"{sentence[0],sentence[1]} : {distance}")
-    
+        score = distance_of_vectors(pair[0],pair[1])
+        if score >= 0.8:
+            similarity_score.append([sentence[0],sentence[1],score])
+    return similarity_score
 
 def distance_of_vectors(vector1,vector2):
     return np.dot(vector1,vector2)
