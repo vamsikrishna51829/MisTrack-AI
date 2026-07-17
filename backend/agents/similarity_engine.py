@@ -4,7 +4,6 @@ import numpy as np
 from itertools import combinations
 
 def similarity_engine(threshold:float):
-    # similarity_score = {}
     sentence1 = []
     sentence2 = []
     scores = []
@@ -20,7 +19,6 @@ def similarity_engine(threshold:float):
             sentence1.append(sentence[0])
             sentence2.append(sentence[1])
             scores.append(score)
-    # return similarity_score
     df = pd.DataFrame({
         "sentence1": sentence1,
         "sentence2": sentence2,
@@ -31,4 +29,4 @@ def similarity_engine(threshold:float):
 def distance_of_vectors(vector1,vector2):
     return np.dot(vector1,vector2)
 
-similarity_engine(0.3)
+similarity_engine(0.8)
