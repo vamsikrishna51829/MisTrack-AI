@@ -42,18 +42,24 @@ def pipeline():
     return result
 
 def newsapi_node(state):
+    try:
+        get_news_from_newsapi(state["keyword"])
+        df = pd.read_csv("../../data/raw/newsapi_KEYWORD_TIMESTAMP.csv")
+        state["newsapi_df"] = df
 
-    get_news_from_newsapi(state["keyword"])
-    df = pd.read_csv("../../data/raw/newsapi_KEYWORD_TIMESTAMP.csv")
-    state["newsapi_df"] = df
+    except Exception as e:
+        print(e)
 
     return state
 
 def mastodon_node(state):
-
-    get_news_from_mastodon(state["keyword"])
-    df = pd.read_csv("../../data/raw/Mastodonapi_KEYWORD_TIMESTAMP.csv")
-    state["mastodon_df"] = df
+    try:
+        get_news_from_mastodon(state["keyword"])
+        df = pd.read_csv("../../data/raw/Mastodonapi_KEYWORD_TIMESTAMP.csv")
+        state["mastodon_df"] = df
+    
+    except Exception as e:
+        print(e)
 
     return state
 
