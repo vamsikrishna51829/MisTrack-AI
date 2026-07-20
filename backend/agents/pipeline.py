@@ -45,39 +45,43 @@ def newsapi_node(state):
     try:
         get_news_from_newsapi(state["keyword"])
         df = pd.read_csv("../../data/raw/newsapi_KEYWORD_TIMESTAMP.csv")
-        state["newsapi_df"] = df
 
     except Exception as e:
         print(e)
 
-    return state
+    return {
+        "newsapi_df":df
+    }
 
 def mastodon_node(state):
     try:
         get_news_from_mastodon(state["keyword"])
         df = pd.read_csv("../../data/raw/Mastodonapi_KEYWORD_TIMESTAMP.csv")
-        state["mastodon_df"] = df
     
     except Exception as e:
         print(e)
 
-    return state
+    return {
+        "mastodon_df":df
+    }
 
 def merge_data_node(state):
     
-    news_combine()
+    news_combine(state["newsapi_df"],state["mastodon_df"])
     df = pd.read_csv("../../data/processed/unified_dataset.csv")
-    state["merged_df"] = df
 
-    return state
+    return {
+        "merged_df":df
+    }
 
 def claim_extration_node(state):
     
     response_saving()
     df = pd.read_csv("../../data/processed/unified_dataset.csv")
-    state["claims_df"] = df
 
-    return state
+    return {
+        "claims_df":df
+    }
 
 def similar_node(state):
 
@@ -85,6 +89,8 @@ def similar_node(state):
     df = pd.read_csv("../../data/processed/similarity_dataset.csv")
     state["similar_df"] = df
 
-    return state
+    return {
+        "similar_df":df
+    }
 
 print(pipeline())
