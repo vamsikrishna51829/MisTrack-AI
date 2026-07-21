@@ -40,5 +40,3 @@ def convert_to_name(source):
     source = dict(source)
     source = source['name']
     return source
-
-get_news_from_newsapi(keyword= "covid")

@@ -36,5 +36,3 @@ def json_into_dataframe(JSON):
     df = pd.DataFrame(data=data['accounts'],columns=["username","acct","display_name","note","bot","followers_count","statuses_count","created_at","url"])
     df.to_csv("../../data/raw/Mastodonapi_KEYWORD_TIMESTAMP.csv",index=False,)
     
-
-get_news_from_mastodon(keyword="covid")
