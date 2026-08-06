@@ -5,6 +5,7 @@ from sklearn.metrics import classification_report
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import hstack
 from scipy.sparse import csr_matrix
+import joblib
 
 def virality_model():
 
@@ -26,6 +27,8 @@ def virality_model():
     model = RandomForestClassifier(n_estimators=100,random_state=50,class_weight="balanced")
 
     model.fit(train_sparse_matrix,y_train)
+    joblib.dump(model,"../trained_models/virality_random_forest.joblib")
+    joblib.dump(vectorizer,"../trained_models/virality_tfidf_vectorizer.joblib")
 
     y_pred = model.predict(test_sparse_matrix)
 
