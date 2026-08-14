@@ -1,19 +1,32 @@
 import pandas as pd 
+from sklearn.model_selection import train_test_split
+from xgboost import XGBClassifier
+from sklearn.metrics import classification_report
 
 df = pd.read_csv("../../../data/processed/bot_dataset.csv")
 
-# df = df.drop(columns=["Unnamed: 0"])
+X = df.drop(columns=["label","created_at"])
+Y = df["label"]
 
-statuses_count = df["statuses_count"]
-account_age_days = df["account_age_days"]
-avg_daily_posts = []
+x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=0.2,random_state=42,stratify=Y)
 
-for i in range(len(df["statuses_count"])):
-    if account_age_days[i] != 0:
-        avg_daily_posts.append(statuses_count[i]/account_age_days[i])
-    else:
-        avg_daily_posts.append(0)
+model = XGBClassifier(n_estimators=100, max_depth = 5,learning_rate = 0.3)
 
-df["avg_daily_posts"] = avg_daily_posts
+model.fit(x_train,y_train)
 
-df.to_csv("../../../data/processed/bot_dataset.csv",index=False)
+y_pred = model.predict(x_test)
+
+report = classification_report(y_test,y_pred)
+print(report)
+
+feature_importance = pd.DataFrame({
+    "feature" : X.columns,
+    "importance" : model.feature_importances_
+})
+
+feature_importance = feature_importance.sort_values(
+    by="importance",
+    ascending=False
+)
+
+print(feature_importance)
