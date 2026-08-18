@@ -2,10 +2,12 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report
+import joblib
 
-df = pd.read_csv("../../../data/processed/bot_dataset.csv")
+df = pd.read_csv("../../../data/processed/bot_dataset_enriched.csv")
 
-X = df.drop(columns=["label","created_at"])
+# X = df.drop(columns=["label","created_at","statuses_count"])
+X = df[["followers_to_friends_ratio","avg_daily_posts"]]
 Y = df["label"]
 
 x_train,x_test,y_train,y_test = train_test_split(X,Y,test_size=0.2,random_state=42,stratify=Y)
@@ -18,6 +20,8 @@ y_pred = model.predict(x_test)
 
 report = classification_report(y_test,y_pred)
 print(report)
+
+joblib.dump(model,"../trained_models/bot_XGBClassifier.joblib")
 
 feature_importance = pd.DataFrame({
     "feature" : X.columns,
